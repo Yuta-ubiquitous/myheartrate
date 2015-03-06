@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}メインページ{% endblock title %}
+
+{% block extrahead %}
+<style>
+table {
+  margin-top: 8px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">最近のデータ</h3>
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in datalist %}
+        <tr>
+          <td>{{ data.id }}</td>
+          <td>{{ data.pub_date }}</td>
+          <td>{{ data.user }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock content %}
