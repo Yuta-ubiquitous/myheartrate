@@ -2,16 +2,26 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from cms.models import HeartRateData, Content
 from datetime import datetime
 import sys, re
 
 def myheartrate_main(request):
-	#	return HttpResponse(u'MyHeartRateMain')
-	datalist = HeartRateData.objects.all().order_by('id')
-	return render_to_response('cms/myheartrate_main.html',
-	{'datalist': datalist},
-	context_instance=RequestContext(request))
+	return render_to_main(request)
+
+def myheartrate_data_main(request, heartratedata_id):
+	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
+	return render_to_response('basecontent.html',
+		context_instance=RequestContext(request))
+
+#def myheartrate_data_main(request, heartratedata_id):
+#	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
+#	datalist = heartratedata.contents.all().order_by('id')
+#	text = ''
+#	for data in datalist:
+#		text += ' ' + str(data.bpm)
+#	return HttpResponse(text)
 
 def upload_file(request):
 	print('upload_file')
@@ -25,12 +35,18 @@ def upload_file(request):
 
 		if validate_text_file(text):
 			text_file_to_db(text)
-			return HttpResponse(u'Success')
+			return render_to_main(request)
 		else:
-			return HttpResponse(text)
+			return render_to_main(request)
 			# handle_uploaded_file(request.FILES['file'])
 			# return HttpResponseRedirect('/myheartrate')
-	return HttpResponse(u'failed')
+	return render_to_main(request)
+
+def render_to_main(request):
+	datalist = HeartRateData.objects.all().order_by('id')
+	return render_to_response('cms/myheartrate_main.html',
+			{'datalist': datalist},
+			context_instance=RequestContext(request))
 
 def text_file_to_db(text):
 	heartRateData = HeartRateData()
