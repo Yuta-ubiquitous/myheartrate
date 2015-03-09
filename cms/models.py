@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from datetime import datetime
 
 class HeartRateData(models.Model):
-	pub_date = models.DateTimeField('date published')
+	pub_date = models.DateTimeField(default=datetime.now)
 	user = models.CharField(max_length=50)
 
 	def __str__(self):
@@ -16,3 +17,10 @@ class Content(models.Model):
 
 	def __str__(self):
 		return str(self.bpm)
+
+class Tag(models.Model):
+	heartratedata = models.ForeignKey(HeartRateData, related_name='tags')
+	tag = models.CharField(max_length=64)
+
+	def __str__(self):
+		return self.tag
