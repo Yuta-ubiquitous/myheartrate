@@ -59,8 +59,16 @@ function handleFileSelect(evt) {
   <tbody>
     {% for data in datalist %}
       <tr>
-        <td>{{ data.id }}</td>
-        <td><a href="/myheartrate/data/main/{{ data.id }}">{{ data.pub_date }}</a></td>
+        <td>
+          <a href="/myheartrate/data/{{ data.id }}/fundamental/">
+            {{ data.id }}
+          </a>
+        </td>
+        <td>
+          <a href="/myheartrate/data/{{ data.id }}/fundamental/">
+            {{ data.pub_date }}
+          </a>
+        </td>
         <td>{{ data.user }}</td>
       </tr>
     {% endfor %}

@@ -4,12 +4,14 @@
 
 {% block content %}
 <div class="row">
-	<div class="col-md-4">
-		<p>.col-mod-4</p>
-		<p>Fundamantional Data</p>
-		<p>BPM Graph</p>
+	<div class="col-md-2">
+		<ul class="nav nav-pills nav-stacked">
+			<li role="presentation" class="active"><a href="/myheartrate/data/{{ heartratedata_id }}/fundamental">Fundamental Data</a></li>
+			<li role="presentation"><a href="/myheartrate/data/{{ heartratedata_id }}/bpmgraph">BPM Graph</a></li>
+			<li role="presentation"><a href="/myheartrate/data/{{ heartratedata_id }}/raw">BPM Row</a></li>
+		</ul>
 	</div>
-	<div class="col-md-8">
+	<div class="col-md-10">
 	{% block maincontent %}
 		{{ maincontent }}
 	{% endblock maincontent %}
