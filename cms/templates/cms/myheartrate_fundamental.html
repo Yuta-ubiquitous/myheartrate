@@ -8,10 +8,27 @@ table {
   margin-top: 8px;
 }
 </style>
+<script type="text/javascript">
+  $(function(){
+    $("#fundamental").toggleClass('active');
+  });
+</script>
 {% endblock extrahead %}
 
 {% block maincontent %}
-
 <h3 class="page-header">Fundamental Data</h3>
-
+<dl class="dl-horizontal">
+  <dt>ID</dt>
+  <dd>{{ heartratedata.id }}</dd>
+  <dt>Resisterd Date</dt>
+  <dd>{{ heartratedata.pub_date }}</dd>
+  <dt>Tags</dt>
+  <dd>未実装</dd>
+  <dt>Recorded Time</dt>
+  <dd>{{ heartratedata.firstTime }} to {{ heartratedata.endTime }}</dd>
+  <dt>Recorded Duration</dt>
+  <dd>{{ minute }}min-{{ second }}sec</dd>
+  <dt>Vaule Points</dt>
+  <dd>{{ heartratedata.points }}</dd>
+</dl>
 {% endblock maincontent %}

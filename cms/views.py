@@ -1,23 +1,50 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render, render_to_response, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
 from cms.models import HeartRateData, Content
+from cms.forms import Login_form
 from datetime import datetime, timedelta
 import sys, re, pytz
 
 def myheartrate_main(request):
 	return render_to_main(request)
 
+def myheartrate_login(request):
+	if request.POST:
+		form = Login_form(request.POST)
+		if form.is_valid():
+			username = request.POST['username']
+			password = request.POST['password']
+			user = authenticate(username=username, password=password)
+			if user is not None:
+				login(request, user)
+				return redirect('cms:myheartrate_main')
+	else:
+		form = Login_form()
+	return render(request, 'cms/myheartrate_login.html', {'form' : form})
+
+def myheartrate_logout(request):
+	logout(request)
+	return redirect('cms:myheartrate_main')
+
 def myheartrate_data_main(request, heartratedata_id):
+	if not request.user.is_authenticated():
+		return redirect('cms:myheartrate_main')
 	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
-	datalist = heartratedata.contents.all().order_by('id')
+	minute = int(heartratedata.points / 60)
+	second = heartratedata.points % 60
 	return render_to_response('cms/myheartrate_fundamental.html',
-		{'heartratedata_id' : heartratedata_id},
+		dict(heartratedata_id=heartratedata_id,
+			heartratedata=heartratedata,
+			minute=minute,
+			second=second),
 		context_instance=RequestContext(request))
 
 def myheartrate_data_bpmgraph(request, heartratedata_id):
+	if not request.user.is_authenticated():
+		return redirect('cms:myheartrate_main')
 	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
 	datalist = heartratedata.contents.all().order_by('id')
 	chartData = ''
@@ -26,16 +53,18 @@ def myheartrate_data_bpmgraph(request, heartratedata_id):
 		chartData += '{"time":"'+data.time.astimezone(JST).strftime("%H:%M:%S") +'","value":' +str(data.bpm) +'},'
 
 	firstData = datalist[0].time.astimezone(JST).strftime("(%Y,%m,%d,%H,%M,%S)")
-	lastData = datalist[len(datalist)-1].time.astimezone(JST).strftime("(%Y,%m,%d,%H,%M,%S)")
+	endData = datalist[len(datalist)-1].time.astimezone(JST).strftime("(%Y,%m,%d,%H,%M,%S)")
 
 	return render_to_response('cms/myheartrate_bpmgraph.html',
 		dict(heartratedata_id=heartratedata_id,
 			chartData=chartData,
 			firstData=firstData,
-			lastData=lastData),
+			endData=endData),
 		context_instance=RequestContext(request))
 
 def myheartrate_data_raw(request, heartratedata_id):
+	if not request.user.is_authenticated():
+		return redirect('cms:myheartrate_main')
 	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
 	datalist = heartratedata.contents.all().order_by('id')
 	return render_to_response('cms/myheartrate_bpmraw.html',
@@ -57,12 +86,14 @@ def upload_file(request):
 		print(request.POST)
 		print(request.FILES)
 		file = request.FILES['uploadfile']
+		username = request.POST.get('username', default='error')
 		text = ''
 		for chunk in file.chunks():
 			text += chunk.decode(sys.stdin.encoding)
 
 		if validate_text_file(text):
-			text_file_to_db(text, get_first_time(text))
+			infolist = get_data_info(text)
+			text_file_to_db(text, infolist, username)
 			return render_to_main(request)
 		else:
 			return render_to_main(request)
@@ -76,9 +107,12 @@ def render_to_main(request):
 			{'datalist': datalist[::-1]},
 			context_instance=RequestContext(request))
 
-def text_file_to_db(text, firstTime):
+def text_file_to_db(text, infolist, username):
 	heartRateData = HeartRateData()
-	heartRateData.user = 'yuta.takahashi'
+	heartRateData.user = username
+	heartRateData.firstTime = infolist['firstTime']
+	heartRateData.endTime = infolist['endTime']
+	heartRateData.points = infolist['points']
 	heartRateData.save()
 	array = text.split(' ')
 	i = 0
@@ -89,7 +123,7 @@ def text_file_to_db(text, firstTime):
 			if m != None:
 				content = Content()
 				content.heartratedata = heartRateData
-				content.time = firstTime + second
+				content.time = infolist['firstTime'] + second
 				content.bpm = int(element)
 				print(content)
 				content.save()
@@ -139,25 +173,33 @@ def validate_text_file(text):
 		i += 1
 	return True
 
-def get_first_time(text):
+def get_data_info(text):
 	array = text.split(' ')
-	lastTime = datetime.now()
-	lastTime = lastTime.replace(second=0, microsecond=0)
+	endTime = datetime.now().replace(second=0, microsecond=0)
 	duration = timedelta(0)
 	i = 0
+	count = 0
 	for element in array:
 		if i == 3:
 			m = re.match(r'date_(\d+)-(\d+)', element)
 			month, day = m.groups()
-			lastTime = lastTime.replace(month=int(month), day=int(day))
+			endTime = endTime.replace(month=int(month), day=int(day))
 		elif i == 4:
 			m = re.match(r'at_(\d+):(\d+)', element)
 			hour, minute = m.groups()
-			lastTime = lastTime.replace(hour=int(hour), minute=int(minute))
+			endTime = endTime.replace(hour=int(hour), minute=int(minute))
 		elif i == 5:
 			m = re.match(r'duration_(\d+)min-(\d+)sec', element)
 			dmin, dsec = m.groups()
-			duration = timedelta(seconds=int(dmin)*60+int(dsec))
-			break
+			duration = timedelta(seconds=int(dmin) * 60 + int(dsec))
+		else:
+			m = re.match(r'\d+', element)
+			if m != None:
+				count += 1
 		i += 1
-	return lastTime - duration
+	infolist = {
+		'firstTime': endTime - duration,
+		'endTime': endTime,
+		'points' : count
+	}
+	return infolist

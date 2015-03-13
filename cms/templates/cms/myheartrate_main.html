@@ -11,6 +11,7 @@ table {
 {% endblock %}
 
 {% block content %}
+{% if user.is_authenticated %}
 <script>
 function handleFileSelect(evt) {
   if(window.File && window.FileReader && window.FileList && window.Blob){
@@ -30,6 +31,7 @@ function handleFileSelect(evt) {
     <div class="modal-content">
       <form method="post" action="/myheartrate/upload/" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type='hidden' name='username' value='{{ user.username }}' />
         <div class="modal-header">
           <button class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Upload</h4>
@@ -74,4 +76,11 @@ function handleFileSelect(evt) {
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+<center>
+<img src="/static/images/heart.png" alt ="http://sozaing.com/material/%E3%83%8F%E3%83%BC%E3%83%88%E5%9E%8B%E3%81%AE%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3.html" />
+<h1>MyHeartRate</h1>
+<button type="button" class="btn btn-info"><a href="/myheartrate/login">Login</a></button>
+</center>
+{% endif %}
 {% endblock content %}

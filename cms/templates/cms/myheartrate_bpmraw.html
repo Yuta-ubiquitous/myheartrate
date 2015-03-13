@@ -2,6 +2,14 @@
 
 {% block title %}MyHeartRate -BPM Raw Data- {% endblock title %}
 
+{% block extrahead %}
+<script type="text/javascript">
+  $(function(){
+    $('#raw').addClass('active');
+  });
+</script>
+{% endblock extrahead %}
+
 {% block maincontent %}
 <h3 class="page-header">Raw Data</h3>
 <table class="table table-striped table-bordered">

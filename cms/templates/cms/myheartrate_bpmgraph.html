@@ -46,11 +46,11 @@
         graph.lineColor = "#d1655d";
         graph.negativeLineColor = "#637bb6"; // this line makes the graph to change color when it drops below 0
         graph.bullet = "round";
-        graph.bulletSize = 2;
+        graph.bulletSize = 1;
         graph.bulletBorderColor = "#FFFFFF";
         graph.bulletBorderAlpha = 0;
-        graph.bulletBorderThickness = 2;
-        graph.lineThickness = 2;
+        graph.bulletBorderThickness = 1;
+        graph.lineThickness = 1;
         graph.valueField = "value";
         graph.balloonText = "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>";
         chart.addGraph(graph);
@@ -75,12 +75,16 @@
     // this method is called when chart is first inited as we listen for "dataUpdated" event
     function zoomChart() {
         // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-        chart.zoomToDates(new Date{{ firstData }}, new Date{{ lastData }});
+        chart.zoomToDates(new Date{{ firstData }}, new Date{{ endData }});
     }
+
+    $(function(){
+      $('#bpmgraph').addClass('active');
+    });
 </script>
 {% endblock extrahead %}
 
 {% block maincontent %}
-<h3 class="page-header">BPM Graph</h3>
-<div id="chartdiv" style="width:100%; height:400px;"></div>
+  <h3 class="page-header">BPM Graph</h3>
+  <div id="chartdiv" style="width:100%; height:400px;"></div>
 {% endblock maincontent %}

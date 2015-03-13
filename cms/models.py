@@ -6,6 +6,9 @@ from datetime import datetime
 class HeartRateData(models.Model):
 	pub_date = models.DateTimeField(default=datetime.now)
 	user = models.CharField(max_length=50)
+	firstTime = models.DateTimeField(default=datetime.now)
+	endTime = models.DateTimeField(default=datetime.now)
+	points = models.IntegerField(blank=False, default=0)
 
 	def __str__(self):
 		return str(self.id)

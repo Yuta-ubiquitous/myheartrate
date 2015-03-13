@@ -12,17 +12,31 @@
 {% block extrahead %}{% endblock %}
 </head>
 <body>
-	<div class="navbar navbar-default navber-fixedtop">
-		<div class="container">
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="/myheartrate">
 					<span class="glyphicon glyphicon-heart"></span>
 					MyHeartRate
 				</a>
 			</div>
-			<p class="navbar-text navbar-right"><small>Prof.Sato Project</small></p>
+			<ul class="nav navbar-nav navbar-right">
+				{% if user.is_authenticated %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+						{{user.username}} <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+            <li><a href="/myheartrate/logout">Logout</a></li>
+          </ul>
+				</li>
+				{% else %}
+				<li><a href="/myheartrate/login">Login</a></li>
+				{% endif %}
+				<li><a>Prof.Sato Project</a></li>
+			</ul>
 		</div>
-	</div>
+	</nav>
   <div class="container">
     {% block content %}
       {{ content }}
