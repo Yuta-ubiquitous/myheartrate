@@ -6,7 +6,20 @@ from django.contrib.auth import authenticate, login, logout
 from cms.models import HeartRateData, Content
 from cms.forms import Login_form
 from datetime import datetime, timedelta
+from numpy import *
+from numpy.fft import *
 import sys, re, pytz
+
+def myheartrate_data_fft(request, heartratedata_id):
+	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
+	datalist = heartratedata.contents.all().order_by('id')
+	bpmlist = []
+	for data in datalist:
+		bpmlist.append(data.bpm)
+	inputSignal = array(bpmlist)
+	fourier = fft(inputSignal)
+	# <class 'numpy.ndarray'>
+	return HttpResponse(fourier)
 
 def myheartrate_main(request):
 	return render_to_main(request)

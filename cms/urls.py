@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 
 	url(r'^data/(?P<heartratedata_id>\d+)/fundamental/$', views.myheartrate_data_main, name='myheartrate_data_main'),
 	url(r'^data/(?P<heartratedata_id>\d+)/bpmgraph/$', views.myheartrate_data_bpmgraph, name='myheartrate_data_bpmgraph'),
-	url(r'^data/(?P<heartratedata_id>\d+)/raw/$', views.myheartrate_data_raw, name='myheartrate_data_raw')
+	url(r'^data/(?P<heartratedata_id>\d+)/raw/$', views.myheartrate_data_raw, name='myheartrate_data_raw'),
+	url(r'^data/(?P<heartratedata_id>\d+)/fft/$', views.myheartrate_data_fft, name='myheartrate_data_fft'),
 )
