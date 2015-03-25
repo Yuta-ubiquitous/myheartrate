@@ -18,8 +18,19 @@ def myheartrate_data_fft(request, heartratedata_id):
 		bpmlist.append(data.bpm)
 	inputSignal = array(bpmlist)
 	fourier = fft(inputSignal)
-	# <class 'numpy.ndarray'>
-	return HttpResponse(fourier)
+	# <class 'numpy.ndarray'> complex128
+	realval = []
+	imagval = []
+	absval = []
+	for z in fourier:
+		realval.append(z.real)
+		imagval.append(z.imag)
+		absval.append(abs(z))
+
+	return render_to_response('cms/myheartrate_fft.html',
+		dict(heartratedata_id=heartratedata_id,
+			fourier=fourier),
+		context_instance=RequestContext(request))
 
 def myheartrate_main(request):
 	return render_to_main(request)

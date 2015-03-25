@@ -1,9 +1,35 @@
 {% extends "basecontent.html" %}
 
-{% block title %}MyHeartRate -Fundamental Data- {% endblock title %}
+{% block title %}MyHeartRate -Spectrum Data- {% endblock title %}
+
+{% block extrahead %}
+<script type="text/javascript">
+  $(function(){
+    $('#fft').addClass('active');
+  });
+</script>
+{% endblock extrahead %}
 
 {% block maincontent %}
 
-
+<h3 class="page-header">Spectrum Data</h3>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Time</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for z in fourier %}
+      <tr>
+        <td>{{ "a" }}</td>
+        <td>{{ "a" }}</td>
+        <td>{{ "b" }}</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 {% endblock maincontent %}
