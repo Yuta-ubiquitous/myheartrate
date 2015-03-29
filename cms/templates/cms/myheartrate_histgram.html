@@ -16,13 +16,11 @@
         // SERIAL CHART
         chart = new AmCharts.AmSerialChart();
         chart.dataProvider = chartData;
-        chart.categoryField = "value";
-        chart.startDuration = 1;
+        chart.categoryField = "width";
 
         // AXES
         // category
         var categoryAxis = chart.categoryAxis;
-        categoryAxis.
         categoryAxis.labelRotation = 90;
         categoryAxis.gridPosition = "start";
 
@@ -32,7 +30,7 @@
 
         // GRAPH
         var graph = new AmCharts.AmGraph();
-        graph.valueField = "width";
+        graph.valueField = "value";
         graph.balloonText = "[[width]]: <b>[[value]]</b>";
         graph.type = "column";
         graph.lineAlpha = 0;

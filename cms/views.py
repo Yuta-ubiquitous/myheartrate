@@ -253,6 +253,7 @@ def myheartrate_data_poincareplot(request, heartratedata_id):
 		context_instance=RequestContext(request))
 
 def myheartrate_data_histgram(request, heartratedata_id):
+	WIDTH_PLUS = 10
 	heartratedata = get_object_or_404(HeartRateData, pk=heartratedata_id)
 	datalist = heartratedata.contents.all().order_by('id')
 	min = 1000
@@ -261,15 +262,13 @@ def myheartrate_data_histgram(request, heartratedata_id):
 		min = min if min < data.bpm else data.bpm
 		max = max if max > data.bpm else data.bpm
 	histgram = {}
-	print(range(min, max))
-	for num in range(min, max + 1):
+	for num in range(min - WIDTH_PLUS, max + 1 + WIDTH_PLUS):
 		histgram.update({num : 0})
 	for data in datalist:
 		histgram[data.bpm] += 1
 	histgram_data = ''
-	for num in range(min, max + 1):
+	for num in range(min - WIDTH_PLUS, max + 1 + WIDTH_PLUS):
 		histgram_data+='{"width":'+str(num)+',"value":'+str(histgram[num])+'},'
-	print(histgram_data)
 	return render_to_response('cms/myheartrate_histgram.html',
 		dict(heartratedata_id=heartratedata_id,chartData=histgram_data),
 		context_instance=RequestContext(request))
