@@ -10,7 +10,10 @@ urlpatterns = patterns('',
 	url(r'^logout/$', views.myheartrate_logout, name="myheartrate_logout"),
 
 	url(r'^data/(?P<heartratedata_id>\d+)/fundamental/$', views.myheartrate_data_main, name='myheartrate_data_main'),
+	url(r'^data/(?P<heartratedata_id>\d+)/bpmdata/$', views.myheartrate_data_bpmdata, name='myheartrate_data_bpmdata'),
 	url(r'^data/(?P<heartratedata_id>\d+)/bpmgraph/$', views.myheartrate_data_bpmgraph, name='myheartrate_data_bpmgraph'),
-	url(r'^data/(?P<heartratedata_id>\d+)/raw/$', views.myheartrate_data_raw, name='myheartrate_data_raw'),
-	url(r'^data/(?P<heartratedata_id>\d+)/fft/$', views.myheartrate_data_fft, name='myheartrate_data_fft'),
+	url(r'^data/(?P<heartratedata_id>\d+)/spectrumdata/$', views.myheartrate_data_spectrumdata, name='myheartrate_data_spectrumdata'),
+	url(r'^data/(?P<heartratedata_id>\d+)/spectrumgraph/$', views.myheartrate_data_spectrumgraph, name='myheartrate_data_spectrumgraph'),
+	url(r'^data/(?P<heartratedata_id>\d+)/poincareplot/$', views.myheartrate_data_poincareplot, name='myheartrate_data_poincareplot'),
+	url(r'^data/(?P<heartratedata_id>\d+)/histgram/$', views.myheartrate_data_histgram, name='myheartrate_data_histgram'),
 )

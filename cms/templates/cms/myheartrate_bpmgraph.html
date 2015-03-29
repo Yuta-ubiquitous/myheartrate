@@ -21,9 +21,6 @@
         chart.autoMargins = false;
         chart.dataDateFormat = "JJ:NN:SS";
 
-        // listen for "dataUpdated" event (fired when chart is inited) and call zoomChart method when it happens
-        chart.addListener("dataUpdated", zoomChart);
-
         // AXES
         // category
         var categoryAxis = chart.categoryAxis;
@@ -71,12 +68,6 @@
         // WRITE
         chart.write("chartdiv");
     });
-
-    // this method is called when chart is first inited as we listen for "dataUpdated" event
-    function zoomChart() {
-        // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-        chart.zoomToDates(new Date{{ firstData }}, new Date{{ endData }});
-    }
 
     $(function(){
       $('#bpmgraph').addClass('active');

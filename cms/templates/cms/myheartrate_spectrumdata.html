@@ -5,7 +5,7 @@
 {% block extrahead %}
 <script type="text/javascript">
   $(function(){
-    $('#fft').addClass('active');
+    $('#spectrumdata').addClass('active');
   });
 </script>
 {% endblock extrahead %}
@@ -17,16 +17,20 @@
   <thead>
     <tr>
       <th>ID</th>
-      <th>Time</th>
-      <th>Value</th>
+      <th>Frequency[Hz]</th>
+      <th>Abs</th>
+      <th>Real</th>
+      <th>Imag</th>
     </tr>
   </thead>
   <tbody>
     {% for z in fourier %}
       <tr>
-        <td>{{ "a" }}</td>
-        <td>{{ "a" }}</td>
-        <td>{{ "b" }}</a></td>
+        <td>{{ z.id }}</td>
+        <td>{{ z.freq }}</td>
+        <td>{{ z.abs }}</td>
+        <td>{{ z.real }}</td>
+        <td>{{ z.imag }}</a></td>
       </tr>
     {% endfor %}
   </tbody>
