@@ -68,33 +68,40 @@ def validate_text_file(text):
 		if i == 0:
 			m = re.match(r'^Profile', element)
 			if m == None:
+				print('invalied : Profile')
 				return False
 		elif i == 1:
 			s = re.search(r'Values$', element)
 			if s == None:
+				print('invalied : Values')
 				return False
 		elif i == 2:
 			m = re.match(r'stored', element)
 			if m == None:
+				print('invalied : stored')
 				return False
 		elif i == 3:
 			m = re.match(r'date_(\d+)-(\d+)', element)
 			if m == None:
+				print('invalied : data_**-**')
 				return False
 			else:
 				month, day = m.groups()
 		elif i == 4:
 			m = re.match(r'at_(\d+):(\d+)', element)
 			if m == None:
+				print('invalied : at_**:**')
 				return False
 			else:
 				hour, minute = m.groups()
 		elif i == 5:
-			m = re.match(r'duration_(\d+)min-(\d+)sec', element)
+			m = re.match(r'duration(_+)(\d+)min(-+)(\d+)sec', element)
 			if m == None:
+				print('invalied : duration_**min-**sec')
 				return False
 			else:
-				dmin, dsec = m.groups()
+				print(m.groups())
+				buf0, dmin, buf1, dsec = m.groups()
 		else:
 			m = re.match(r'\d*', element)
 			if m == None:
@@ -118,8 +125,8 @@ def get_data_info(text):
 			hour, minute = m.groups()
 			endTime = endTime.replace(hour=int(hour), minute=int(minute))
 		elif i == 5:
-			m = re.match(r'duration_(\d+)min-(\d+)sec', element)
-			dmin, dsec = m.groups()
+			m = re.match(r'duration(_+)(\d+)min(-+)(\d+)sec', element)
+			buf0,dmin, buf1, dsec = m.groups()
 			duration = timedelta(seconds=int(dmin) * 60 + int(dsec))
 		else:
 			m = re.match(r'\d+', element)
@@ -134,10 +141,10 @@ def get_data_info(text):
 	return infolist
 
 def upload_file(request):
-	print('upload_file')
+	# print('upload_file')
 	if request.method == 'POST':
-		print(request.POST)
-		print(request.FILES)
+		# print(request.POST)
+		# print(request.FILES)
 		file = request.FILES['uploadfile']
 		username = request.POST.get('username', default='error')
 		text = ''
@@ -147,18 +154,30 @@ def upload_file(request):
 		if validate_text_file(text):
 			infolist = get_data_info(text)
 			text_file_to_db(text, infolist, username)
-			return render_to_main(request)
+			return redirect('cms:myheartrate_main', notice='success')
 		else:
-			return render_to_main(request)
+			return redirect('cms:myheartrate_main', notice='failed')
 			# handle_uploaded_file(request.FILES['file'])
 			# return HttpResponseRedirect('/myheartrate')
-	return render_to_main(request)
+	return redirect('cms:myheartrate_main')
 
 def myheartrate_main(request):
 	datalist = HeartRateData.objects.all().order_by('id')
+	if request.GET.__contains__("notice"):
+		notice = request.GET["notice"]
+		if notice == 'success':
+			print('success : Your data is valied.')
+			return render_to_response('cms/myheartrate_main.html',
+				dict(datalist=datalist[::-1], is_success=True),
+				context_instance=RequestContext(request))
+		elif notice == 'failed':
+			print('failed : Your data is invalied.')
+			return render_to_response('cms/myheartrate_main.html',
+				dict(datalist=datalist[::-1], is_failed=True),
+				context_instance=RequestContext(request))
 	return render_to_response('cms/myheartrate_main.html',
-			{'datalist': datalist[::-1]},
-			context_instance=RequestContext(request))
+		{'datalist': datalist[::-1]},
+		context_instance=RequestContext(request))
 
 def myheartrate_data_main(request, heartratedata_id):
 	if not request.user.is_authenticated():

@@ -5,6 +5,7 @@ from cms import views
 
 urlpatterns = patterns('',
 	url(r'^$', views.myheartrate_main, name='myheartrate_main'),
+	url(r'^\?notice=(?P<notice>\w+)', views.myheartrate_main, name='myheartrate_main'),
 	url(r'^upload/$', views.upload_file, name='upload_file'),
 	url(r'^login/$', views.myheartrate_login, name='myheartrate_login'),
 	url(r'^logout/$', views.myheartrate_logout, name="myheartrate_logout"),
